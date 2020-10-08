@@ -1,0 +1,21 @@
+#
+#server:
+#  port: 8888
+#
+#spring:
+#  jackson:
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    time-zone: GMT+8
+#  datasource:
+#    username: root
+#    password: 123456
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/ddblog2?serverTimezone=GMT
+#
+#mybatis:
+#  ##classpath  is resources
+#  mapper-locations: classpath:generator/*.xml
+###显示  mybatis 执行过程
+#logging:
+#  level:
+#    com.mcd: debug
