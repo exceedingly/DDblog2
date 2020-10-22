@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/jdbc
+    http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+    http://www.springframework.org/schema/cache
+    http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/util
+    http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!--    因为事务要对mysql动刀-->
+    <bean id="datasources" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="url" value="jdbc:mysql://localhost:3306/ddblog2?serverTimezone=UTC"></property>
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+
+
+    <!--找到事务 大哥 -->
+    <bean id="myTrans" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--        因为事务要对mysql动刀 所以 必须配上数据源-->
+        <property name="dataSource" ref="datasources"></property>
+
+
+    </bean>
+    <!--    大哥 派个人来帮忙   这个人就代表大哥了   为什么大哥不来  来找大哥帮忙的人太多了 -->
+    <tx:advice id="txAdvice" transaction-manager="myTrans">
+        <tx:attributes>
+            <tx:method name="addUser"/>
+            <tx:method name="sel*"/>
+            <tx:method name="ins*"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+
+    </tx:advice>
+
+    <!--    好像是 大哥派小弟  小弟来帮我  拐了个弯  但是拐的这个弯 可以加上事务 acid特性 特别的妙不可言-->
+    <aop:config>
+
+        <!--      找到了位置-->
+        <aop:pointcut id="adduser" expression="execution(* com.mcd.service.impl.UserMapperServiceImpl.addUser(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="adduser"></aop:advisor>
+
+
+    </aop:config>
+
+
+</beans>
